@@ -139,10 +139,36 @@ class _AnalogClockState extends State<AnalogClock> {
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
           Flexible(
-              child: new Row(
-                  children: [new List<int>.generate(10, (i) => (i + 1))]
-                      .map((item) => getSimpleClock(key: item.toString()))
-                      .toList())
+              child: new Row(children: <Widget>[
+            for (int i = 1; i <= 17; i++) getSimpleClock(id: i.toString())
+          ])
+              /* Row(
+              mainAxisSize: MainAxisSize.max,
+              children: <Widget>[
+                getSimpleClock(),
+                getSimpleClock(),
+                getSimpleClock(),
+                getSimpleClock(),
+                getSimpleClock(),
+                getSimpleClock(),
+                getSimpleClock(),
+                getSimpleClock(),
+                getSimpleClock(),
+                getSimpleClock(),
+                getSimpleClock(),
+                getSimpleClock(),
+                getSimpleClock(),
+                getSimpleClock(),
+                getSimpleClock(),
+                getSimpleClock(),
+                getSimpleClock(),
+              ],
+            ), */
+              ),
+          Flexible(
+              child: Row(children: <Widget>[
+            for (int i = 18; i <= 34; i++) getSimpleClock(id: i.toString())
+          ])
 
               /* Row(
               mainAxisSize: MainAxisSize.max,
@@ -171,28 +197,161 @@ class _AnalogClockState extends State<AnalogClock> {
             child: Row(
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
+                // layer 3
+                getSimpleClock(id: "35"),
+                getSimpleClock(id: "36"),
+                // first time
+                getSimpleClock(key: "time1", id: "1"),
+                getSimpleClock(key: "time1", id: "2"),
+                getSimpleClock(key: "time1", id: "3"),
+                // second time
+                getSimpleClock(key: "time2", id: "1"),
+                getSimpleClock(key: "time2", id: "2"),
+                getSimpleClock(key: "time2", id: "3"),
+                // middle
+                getSimpleClock(id: "37"),
+                // third time
+                getSimpleClock(key: "time3", id: "1"),
+                getSimpleClock(key: "time3", id: "2"),
+                getSimpleClock(key: "time3", id: "3"),
+                // fourth time
+                getSimpleClock(key: "time4", id: "1"),
+                getSimpleClock(key: "time4", id: "2"),
+                getSimpleClock(key: "time4", id: "3"),
+                // boundary
+                getSimpleClock(id: "38"),
+                getSimpleClock(id: "39"),
               ],
             ),
           ),
           Flexible(
             child: Row(
+              mainAxisSize: MainAxisSize.max,
+              children: <Widget>[
+                // layer 3
+                getSimpleClock(id: "40"),
+                getSimpleClock(id: "41"),
+                // first time
+                getSimpleClock(key: "time1", id: "4"),
+                getSimpleClock(key: "time1", id: "5"),
+                getSimpleClock(key: "time1", id: "6"),
+                // second time
+                getSimpleClock(key: "time2", id: "4"),
+                getSimpleClock(key: "time2", id: "5"),
+                getSimpleClock(key: "time2", id: "6"),
+                // middle
+                getSimpleClock(id: "42"),
+                // third time
+                getSimpleClock(key: "time3", id: "4"),
+                getSimpleClock(key: "time3", id: "5"),
+                getSimpleClock(key: "time3", id: "6"),
+                // fourth time
+                getSimpleClock(key: "time4", id: "4"),
+                getSimpleClock(key: "time4", id: "5"),
+                getSimpleClock(key: "time4", id: "6"),
+                // boundary
+                getSimpleClock(id: "43"),
+                getSimpleClock(id: "44"),
+              ],
+            ),
+          ),
+          Flexible(
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              children: <Widget>[
+                // layer 3
+                getSimpleClock(id: "45"),
+                getSimpleClock(id: "46"),
+                // first time
+                getSimpleClock(key: "time1", id: "7"),
+                getSimpleClock(key: "time1", id: "8"),
+                getSimpleClock(key: "time1", id: "9"),
+                // second time
+                getSimpleClock(key: "time2", id: "7"),
+                getSimpleClock(key: "time2", id: "8"),
+                getSimpleClock(key: "time2", id: "9"),
+                // middle
+                getSimpleClock(id: "47"),
+                // third time
+                getSimpleClock(key: "time3", id: "7"),
+                getSimpleClock(key: "time3", id: "8"),
+                getSimpleClock(key: "time3", id: "9"),
+                // fourth time
+                getSimpleClock(key: "time4", id: "7"),
+                getSimpleClock(key: "time4", id: "8"),
+                getSimpleClock(key: "time4", id: "9"),
+                // boundary
+                getSimpleClock(id: "48"),
+                getSimpleClock(id: "49"),
+              ],
+            ),
+          ),
+          Flexible(
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              children: <Widget>[
+                // layer 3
+                getSimpleClock(id: "50"),
+                getSimpleClock(id: "51"),
+                // first time
+                getSimpleClock(key: "time1", id: "10"),
+                getSimpleClock(key: "time1", id: "11"),
+                getSimpleClock(key: "time1", id: "12"),
+                // second time
+                getSimpleClock(key: "time2", id: "10"),
+                getSimpleClock(key: "time2", id: "11"),
+                getSimpleClock(key: "time2", id: "12"),
+                // middle
+                getSimpleClock(id: "52"),
+                // third time
+                getSimpleClock(key: "time3", id: "10"),
+                getSimpleClock(key: "time3", id: "11"),
+                getSimpleClock(key: "time3", id: "12"),
+                // fourth time
+                getSimpleClock(key: "time4", id: "10"),
+                getSimpleClock(key: "time4", id: "11"),
+                getSimpleClock(key: "time4", id: "12"),
+                // boundary
+                getSimpleClock(id: "53"),
+                getSimpleClock(id: "54"),
+              ],
+            ),
+          ),
+          Flexible(
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              children: <Widget>[
+                // layer 3
+                getSimpleClock(id: "55"),
+                getSimpleClock(id: "56"),
+                // first time
+                getSimpleClock(key: "time1", id: "13"),
+                getSimpleClock(key: "time1", id: "14"),
+                getSimpleClock(key: "time1", id: "15"),
+                // second time
+                getSimpleClock(key: "time2", id: "13"),
+                getSimpleClock(key: "time2", id: "14"),
+                getSimpleClock(key: "time2", id: "15"),
+                // middle
+                getSimpleClock(id: "57"),
+                // third time
+                getSimpleClock(key: "time3", id: "13"),
+                getSimpleClock(key: "time3", id: "14"),
+                getSimpleClock(key: "time3", id: "15"),
+                // fourth time
+                getSimpleClock(key: "time4", id: "13"),
+                getSimpleClock(key: "time4", id: "14"),
+                getSimpleClock(key: "time4", id: "15"),
+                // boundary
+                getSimpleClock(id: "58"),
+                getSimpleClock(id: "59"),
+              ],
+            ),
+          ),
+          Flexible(
+              child: Row(children: <Widget>[
+            for (int i = 60; i <= 76; i++) getSimpleClock(id: i.toString())
+          ]) /* Row(
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
                 getSimpleClock(),
@@ -213,10 +372,12 @@ class _AnalogClockState extends State<AnalogClock> {
                 getSimpleClock(),
                 getSimpleClock(),
               ],
-            ),
-          ),
+            ), */
+              ),
           Flexible(
-            child: Row(
+              child: Row(children: <Widget>[
+            for (int i = 77; i <= 93; i++) getSimpleClock(id: i.toString())
+          ]) /* Row(
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
                 getSimpleClock(),
@@ -237,140 +398,23 @@ class _AnalogClockState extends State<AnalogClock> {
                 getSimpleClock(),
                 getSimpleClock(),
               ],
-            ),
-          ),
-          Flexible(
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              children: <Widget>[
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-              ],
-            ),
-          ),
-          Flexible(
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              children: <Widget>[
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-              ],
-            ),
-          ),
-          Flexible(
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              children: <Widget>[
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-              ],
-            ),
-          ),
-          Flexible(
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              children: <Widget>[
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-              ],
-            ),
-          ),
-          Flexible(
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              children: <Widget>[
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-              ],
-            ),
-          ),
+            ), */
+              ),
         ],
       ),
     );
   }
 
-  int getMinute() {
-    if (isAnimating) {
-    } else {}
-    return 1;
+  int getMinute(String key, String id, int index) {
+    //print("timeMap:" + timeMap.toString());
+    if (key != "other" && timeMap != null && timeMap.containsKey("time")) {
+      return timeMap["time"]["2"][id][index];
+    } else {
+      return 37;
+    }
   }
 
-  Widget getSimpleClock({String key, int minute1 = 0, int minute2 = 30}) {
+  Widget getSimpleClock({String key = "other", @required String id}) {
     //final time = DateFormat.Hms().format(DateTime.now());
 
     return Flexible(
@@ -387,13 +431,13 @@ class _AnalogClockState extends State<AnalogClock> {
               color: customTheme.accentColor,
               thickness: 3,
               size: 0.94,
-              angleRadians: minute1 * radiansPerTick,
+              angleRadians: getMinute(key, id, 0) * radiansPerTick,
             ),
             DrawnHand(
               color: customTheme.highlightColor,
               thickness: 3,
               size: 0.94,
-              angleRadians: minute2 * radiansPerTick,
+              angleRadians: getMinute(key, id, 1) * radiansPerTick,
             ),
           ],
         ),
