@@ -28,9 +28,8 @@ class _AnalogClockState extends State<AnalogClock> {
   var _now = DateTime.now(), customTheme;
   Timer _timer;
   DateTime _dateTime = DateTime.now();
-  String hour, minute, second;
-  Map<String, dynamic> timeMap;
-  Map<String, Map<String, dynamic>> startingPoint, stoppingPoint;
+  List<String> hourList, minuteList, secondList;
+  Map<String, dynamic> timeMap, startingPoint, stoppingPoint;
   bool isAnimating, stopMinute1, stopMinute2, isTellingTime;
 
   @override
@@ -40,6 +39,8 @@ class _AnalogClockState extends State<AnalogClock> {
 
     parseJsonFromAssets().then((onValue) {
       timeMap = onValue;
+      timeMap["time1"] =
+          timeMap["time2"] = timeMap["time3"] = timeMap["time4"] = "";
     }).then((v) {
       // Set the initial values.
       _updateModel();
@@ -65,14 +66,15 @@ class _AnalogClockState extends State<AnalogClock> {
 
   void _updateModel() {
     setState(() {
-      hour = DateFormat(widget.model.is24HourFormat ? 'HH' : 'hh')
-          .format(_dateTime);
-      minute = DateFormat('mm').format(_dateTime);
-      second = DateFormat('ss').format(_dateTime);
-      print("printing hms");
+      hourList = DateFormat(widget.model.is24HourFormat ? 'HH' : 'hh')
+          .format(_dateTime)
+          .split("");
+      minuteList = DateFormat('mm').format(_dateTime).split("");
+      //second = DateFormat('ss').format(_dateTime);
+      /* print("printing hms");
       print(hour);
       print(minute);
-      print(second);
+      print(second); */
       /* _temperature = widget.model.temperatureString;
       _temperatureRange = '(${widget.model.low} - ${widget.model.highString})';
       _condition = widget.model.weatherString;
@@ -90,19 +92,25 @@ class _AnalogClockState extends State<AnalogClock> {
     setState(() {
       _dateTime = _now = DateTime.now();
 
-      hour = DateFormat(widget.model.is24HourFormat ? 'HH' : 'hh')
-          .format(_dateTime);
-      minute = DateFormat('mm').format(_dateTime);
-      second = DateFormat('ss').format(_dateTime);
-      print("printing hms");
+      hourList = DateFormat(widget.model.is24HourFormat ? 'HH' : 'hh')
+          .format(_dateTime)
+          .split("");
+      timeMap["time1"] = hourList[0];
+      timeMap["time2"] = hourList[1];
+
+      minuteList = DateFormat('mm').format(_dateTime).split("");
+      timeMap["time3"] = minuteList[0];
+      timeMap["time4"] = minuteList[1];
+      // second = DateFormat('ss').format(_dateTime);
+      /*  print("printing hms");
       print(hour);
       print(minute);
-      print(second);
+      print(second); */
 
-      // Update once per second. Make sure to do it at the beginning of each
+      // Update once per 30 milisecond. Make sure to do it at the beginning of each
       // new second, so that the clock is accurate.
       _timer = Timer(
-        Duration(seconds: 1) - Duration(milliseconds: _now.millisecond),
+        Duration(minutes: 1) - Duration(seconds: _now.second),
         _updateTime,
       );
     });
@@ -132,67 +140,60 @@ class _AnalogClockState extends State<AnalogClock> {
             backgroundColor: Colors.black);
 
     return Semantics.fromProperties(
-      properties: SemanticsProperties(label: 'Analog clock with time.'
+      properties: SemanticsProperties(label: 'Digital clock with time.'
           // value: time,
           ),
       child: Column(
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
           Flexible(
-              child: new Row(children: <Widget>[
-            for (int i = 1; i <= 17; i++) getSimpleClock(id: i.toString())
-          ])
-              /* Row(
+            child: Row(
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
+                getSimpleClock(id: "1"),
+                getSimpleClock(id: "2"),
+                getSimpleClock(id: "3"),
+                getSimpleClock(id: "4"),
+                getSimpleClock(id: "5"),
+                getSimpleClock(id: "6"),
+                getSimpleClock(id: "7"),
+                getSimpleClock(id: "8"),
+                getSimpleClock(id: "9"),
+                getSimpleClock(id: "10"),
+                getSimpleClock(id: "11"),
+                getSimpleClock(id: "12"),
+                getSimpleClock(id: "13"),
+                getSimpleClock(id: "14"),
+                getSimpleClock(id: "15"),
+                getSimpleClock(id: "16"),
+                getSimpleClock(id: "17"),
               ],
-            ), */
-              ),
+            ),
+          ),
           Flexible(
-              child: Row(children: <Widget>[
-            for (int i = 18; i <= 34; i++) getSimpleClock(id: i.toString())
-          ])
-
-              /* Row(
+            child: Row(
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
+                getSimpleClock(id: "18"),
+                getSimpleClock(id: "19"),
+                getSimpleClock(id: "20"),
+                getSimpleClock(id: "21"),
+                getSimpleClock(id: "22"),
+                getSimpleClock(id: "23"),
+                getSimpleClock(id: "24"),
+                getSimpleClock(id: "25"),
+                getSimpleClock(id: "26"),
+                getSimpleClock(id: "27"),
+                getSimpleClock(id: "28"),
+                getSimpleClock(id: "29"),
+                getSimpleClock(id: "30"),
+                getSimpleClock(id: "31"),
+                getSimpleClock(id: "32"),
+                getSimpleClock(id: "33"),
+                getSimpleClock(id: "34"),
               ],
-            ), */
-              ),
+            ),
+          ),
           Flexible(
             child: Row(
               mainAxisSize: MainAxisSize.max,
@@ -349,68 +350,73 @@ class _AnalogClockState extends State<AnalogClock> {
             ),
           ),
           Flexible(
-              child: Row(children: <Widget>[
-            for (int i = 60; i <= 76; i++) getSimpleClock(id: i.toString())
-          ]) /* Row(
+            child: Row(
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
+                getSimpleClock(id: "60"),
+                getSimpleClock(id: "61"),
+                getSimpleClock(id: "62"),
+                getSimpleClock(id: "63"),
+                getSimpleClock(id: "64"),
+                getSimpleClock(id: "65"),
+                getSimpleClock(id: "66"),
+                getSimpleClock(id: "67"),
+                getSimpleClock(id: "68"),
+                getSimpleClock(id: "69"),
+                getSimpleClock(id: "70"),
+                getSimpleClock(id: "71"),
+                getSimpleClock(id: "72"),
+                getSimpleClock(id: "73"),
+                getSimpleClock(id: "74"),
+                getSimpleClock(id: "75"),
+                getSimpleClock(id: "76"),
               ],
-            ), */
-              ),
+            ),
+          ),
           Flexible(
-              child: Row(children: <Widget>[
-            for (int i = 77; i <= 93; i++) getSimpleClock(id: i.toString())
-          ]) /* Row(
+            child: Row(
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
-                getSimpleClock(),
+                getSimpleClock(id: "77"),
+                getSimpleClock(id: "78"),
+                getSimpleClock(id: "79"),
+                getSimpleClock(id: "80"),
+                getSimpleClock(id: "81"),
+                getSimpleClock(id: "82"),
+                getSimpleClock(id: "83"),
+                getSimpleClock(id: "84"),
+                getSimpleClock(id: "85"),
+                getSimpleClock(id: "86"),
+                getSimpleClock(id: "87"),
+                getSimpleClock(id: "88"),
+                getSimpleClock(id: "89"),
+                getSimpleClock(id: "90"),
+                getSimpleClock(id: "91"),
+                getSimpleClock(id: "92"),
+                getSimpleClock(id: "93"),
               ],
-            ), */
-              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  int getMinute(String key, String id, int index) {
-    //print("timeMap:" + timeMap.toString());
+  double getMinute(String key, String id, int index) {
     if (key != "other" && timeMap != null && timeMap.containsKey("time")) {
-      return timeMap["time"]["2"][id][index];
+     /*  print(timeMap["time1"].toString() +
+          timeMap["time2"].toString() +
+          ":" +
+          timeMap["time3"].toString() +
+          timeMap["time4"].toString()); */
+      /* if (timeMap["time"][timeMap[key]][id][index] == 59.5) {
+        timeMap["time"][timeMap[key]][id][index]  = 0.0;
+      } else
+        timeMap["time"][timeMap[key]][id][index]  += 0.5; */
+      //print(timeMap["time"]["2"][id][index].toString());
+      return timeMap["time"][timeMap[key]][id][index] + 0.0;
     } else {
-      return 37;
+      return 37.0;
     }
   }
 
