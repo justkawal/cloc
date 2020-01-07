@@ -26,11 +26,16 @@ class AnalogClock extends StatefulWidget {
 
 class _AnalogClockState extends State<AnalogClock> {
   var _now = DateTime.now(), customTheme;
-  Timer _timer;
+  Timer _timer, _timer1;
   DateTime _dateTime = DateTime.now();
   List<String> hourList, minuteList, secondList;
-  Map<String, dynamic> timeMap, startingPoint, stoppingPoint;
-  bool isAnimating, stopMinute1, stopMinute2, isTellingTime;
+  Map<String, dynamic> timeMap, startingPoint, nextPoint;
+  bool isAnimating,
+      stopMinute1,
+      stopMinute2,
+      isTellingTime,
+      is24Format,
+      isTellingNextTime;
 
   @override
   void initState() {
@@ -44,7 +49,7 @@ class _AnalogClockState extends State<AnalogClock> {
     }).then((v) {
       // Set the initial values.
       _updateModel();
-      _updateTime();
+      _initiateTimeMachine();
     });
   }
 
@@ -60,25 +65,25 @@ class _AnalogClockState extends State<AnalogClock> {
   @override
   void dispose() {
     _timer?.cancel();
+    _timer1?.cancel();
     widget.model.removeListener(_updateModel);
     super.dispose();
   }
 
   void _updateModel() {
     setState(() {
-      hourList = DateFormat(widget.model.is24HourFormat ? 'HH' : 'hh')
+      if (isTellingNextTime) {
+        is24Format = widget.model.is24HourFormat;
+      }
+      /*   hourList = DateFormat(widget.model.is24HourFormat ? 'HH' : 'hh')
           .format(_dateTime)
           .split("");
-      minuteList = DateFormat('mm').format(_dateTime).split("");
+      minuteList = DateFormat('mm').format(_dateTime).split(""); */
       //second = DateFormat('ss').format(_dateTime);
       /* print("printing hms");
       print(hour);
       print(minute);
       print(second); */
-      /* _temperature = widget.model.temperatureString;
-      _temperatureRange = '(${widget.model.low} - ${widget.model.highString})';
-      _condition = widget.model.weatherString;
-      _location = widget.model.location; */
     });
   }
 
@@ -87,6 +92,36 @@ class _AnalogClockState extends State<AnalogClock> {
         .loadString('mapFiles/time.json')
         .then((jsonStr) => jsonDecode(jsonStr));
   }
+
+  // Get whether to show animation or to show the time!!
+  void _initiateTimeMachine() {
+    _now = DateTime.now();
+    if (_now.second >= 0 && _now.second <= 30) {
+      /**
+       * set the value of time here without showing the 
+       * encircling animation so as to tell the use the time on the spot
+       **/
+      _dateTime = _now = DateTime.now();
+
+      hourList = DateFormat(widget.model.is24HourFormat ? 'HH' : 'hh')
+          .format(_dateTime)
+          .split("");
+      startingPoint["time1"] = timeMap["time"][hourList[0]];
+      startingPoint["time2"] = timeMap["time"][hourList[1]];
+
+      minuteList = DateFormat('mm').format(_dateTime).split("");
+      startingPoint["time3"] = timeMap["time"][hourList[0]];
+      startingPoint["time4"] = timeMap["time"][hourList[1]];
+
+      _timer1 = Timer(
+        Duration(seconds: 30) - Duration(seconds: _now.second),
+        _startAnimation,
+      );
+    } else if (_now.second > 30 && _now.second <= 56) {
+    } else {}
+  }
+
+  void _startAnimation() {}
 
   void _updateTime() {
     setState(() {
@@ -110,7 +145,7 @@ class _AnalogClockState extends State<AnalogClock> {
       // Update once per 30 milisecond. Make sure to do it at the beginning of each
       // new second, so that the clock is accurate.
       _timer = Timer(
-        Duration(minutes: 1) - Duration(seconds: _now.second),
+        Duration(minutes: 1) - Duration(seconds: _now.second) - Duration(),
         _updateTime,
       );
     });
@@ -403,8 +438,14 @@ class _AnalogClockState extends State<AnalogClock> {
   }
 
   double getMinute(String key, String id, int index) {
-    if (key != "other" && timeMap != null && timeMap.containsKey("time")) {
-     /*  print(timeMap["time1"].toString() +
+    if (key != "other" &&
+        timeMap != null &&
+        timeMap.containsKey("time") &&
+        (key == "time1" ||
+            key == "time2" ||
+            key == "time3" ||
+            key == "time4")) {
+      /*  print(timeMap["time1"].toString() +
           timeMap["time2"].toString() +
           ":" +
           timeMap["time3"].toString() +
