@@ -26,8 +26,9 @@ class AnalogClock extends StatefulWidget {
 
 class _AnalogClockState extends State<AnalogClock> {
   var _now = DateTime.now(), customTheme;
-  Timer _timer, _timer1;
+  Timer _timer, _timer1, _timer2, _timer3;
   DateTime _dateTime = DateTime.now();
+  String current = "Time";
   List<String> hourList, minuteList, secondList;
   Map<String, dynamic> timeMap, startingPoint, nextPoint;
   bool isAnimating,
@@ -49,7 +50,7 @@ class _AnalogClockState extends State<AnalogClock> {
     }).then((v) {
       // Set the initial values.
       _updateModel();
-      _initiateTimeMachine();
+      _initiateTimeMachine(firstLaunch: true);
     });
   }
 
@@ -66,6 +67,8 @@ class _AnalogClockState extends State<AnalogClock> {
   void dispose() {
     _timer?.cancel();
     _timer1?.cancel();
+    _timer2?.cancel();
+    _timer3?.cancel();
     widget.model.removeListener(_updateModel);
     super.dispose();
   }
@@ -93,15 +96,16 @@ class _AnalogClockState extends State<AnalogClock> {
         .then((jsonStr) => jsonDecode(jsonStr));
   }
 
-  // Get whether to show animation or to show the time!!
-  void _initiateTimeMachine() {
-    _now = DateTime.now();
+  // A repetative function to Get whether to show animation or to show the time!!
+  void _initiateTimeMachine({bool firstLaunch = false}) {
+    _dateTime = _now = DateTime.now();
+
     if (_now.second >= 0 && _now.second <= 30) {
+      current = "time";
       /**
        * set the value of time here without showing the 
        * encircling animation so as to tell the use the time on the spot
        **/
-      _dateTime = _now = DateTime.now();
 
       hourList = DateFormat(widget.model.is24HourFormat ? 'HH' : 'hh')
           .format(_dateTime)
@@ -110,18 +114,36 @@ class _AnalogClockState extends State<AnalogClock> {
       startingPoint["time2"] = timeMap["time"][hourList[1]];
 
       minuteList = DateFormat('mm').format(_dateTime).split("");
-      startingPoint["time3"] = timeMap["time"][hourList[0]];
-      startingPoint["time4"] = timeMap["time"][hourList[1]];
+      startingPoint["time3"] = timeMap["time"][minuteList[0]];
+      startingPoint["time4"] = timeMap["time"][minuteList[1]];
+      stopMinute1 = stopMinute2 = true;
 
       _timer1 = Timer(
-        Duration(seconds: 30) - Duration(seconds: _now.second),
-        _startAnimation,
+        Duration(seconds: 31) - Duration(seconds: _now.second),
+        _initiateTimeMachine,
       );
-    } else if (_now.second > 30 && _now.second <= 56) {
+    } else if (_now.second > 30 && _now.second <= 58) {
+      /**
+       * Animation part
+       */
+      current = "animate";
+      if (firstLaunch)
+        startingPoint["start"] = timeMap["animate"];
+      else {
+        nextPoint["next"] = timeMap["animate"];
+        _timer2 =
+            Timer(Duration(seconds: 3, milliseconds: 600), _freeMinuteHand);
+      }
+
+      _timer3 = Timer(
+          Duration(seconds: 58) - Duration(seconds: DateTime.now().second),
+          _initiateTimeMachine);
     } else {}
   }
 
-  void _startAnimation() {}
+  void _freeMinuteHand() {
+    stopMinute1 = stopMinute2 = false;
+  }
 
   void _updateTime() {
     setState(() {
@@ -145,7 +167,7 @@ class _AnalogClockState extends State<AnalogClock> {
       // Update once per 30 milisecond. Make sure to do it at the beginning of each
       // new second, so that the clock is accurate.
       _timer = Timer(
-        Duration(minutes: 1) - Duration(seconds: _now.second) - Duration(),
+        Duration(minutes: 1) - Duration(seconds: _now.second),
         _updateTime,
       );
     });
@@ -439,12 +461,16 @@ class _AnalogClockState extends State<AnalogClock> {
 
   double getMinute(String key, String id, int index) {
     if (key != "other" &&
-        timeMap != null &&
-        timeMap.containsKey("time") &&
+        startingPoint != null &&
+        startingPoint.containsKey("time") &&
         (key == "time1" ||
             key == "time2" ||
             key == "time3" ||
             key == "time4")) {
+      var startValue = startingPoint[key][id][index];
+      var nextValue = nextPoint[key][id][index];
+      if (stopMinute1 && stopMinute2 && startValue == nextValue) {
+      } else {}
       /*  print(timeMap["time1"].toString() +
           timeMap["time2"].toString() +
           ":" +
@@ -455,6 +481,7 @@ class _AnalogClockState extends State<AnalogClock> {
       } else
         timeMap["time"][timeMap[key]][id][index]  += 0.5; */
       //print(timeMap["time"]["2"][id][index].toString());
+
       return timeMap["time"][timeMap[key]][id][index] + 0.0;
     } else {
       return 37.0;
