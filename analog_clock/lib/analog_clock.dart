@@ -43,7 +43,6 @@ class _AnalogClockState extends State<AnalogClock> {
     otherMap = new Map<String, dynamic>();
     otherMap = Map.fromIterable(List.generate(93, (index) => index),
         key: (v) => (v + 1).toString(), value: (v) => [37.0, 37.0]);
-    //print(otherMap.toString());
     widget.model.addListener(_updateModel);
 
     parseJsonFromAssets().then((onValue) {
@@ -173,8 +172,6 @@ class _AnalogClockState extends State<AnalogClock> {
       print("tellingTime: " + DateTime.now().second.toString());
       print(startingPoint.toString());
       setState(() {});
-      //print("nextPoint");
-      // print(nextPoint.toString());
       _timer4 =
           Timer(Duration(seconds: 3, milliseconds: 600), _initiateTimeMachine);
     }
@@ -185,7 +182,7 @@ class _AnalogClockState extends State<AnalogClock> {
       // second = DateFormat('ss').format(_dateTime);
       // Update once per 30 milisecond So, as to increament the minute hand.
       _timer = Timer(
-        Duration(milliseconds: 3000),
+        Duration(milliseconds: 30),
         _repeater,
       );
     });
@@ -482,7 +479,7 @@ class _AnalogClockState extends State<AnalogClock> {
       // ShowTime
       return startingPoint["start"][key][id][index];
     } else if (current == Status.Animate) {
-      var start = startingPoint["start"][key][id][index],
+      double start = startingPoint["start"][key][id][index],
           next = nextPoint["next"][key][id][index];
 
       if (start != next && !stopMinute1 && !stopMinute2) {
@@ -492,7 +489,7 @@ class _AnalogClockState extends State<AnalogClock> {
     } else {
       // ProcessingTime
 
-      var start = startingPoint["start"][key][id][index],
+      double start = startingPoint["start"][key][id][index],
           next = nextPoint["next"][key][id][index];
 
       if (start != next && !stopMinute1 && !stopMinute2) {
@@ -519,13 +516,13 @@ class _AnalogClockState extends State<AnalogClock> {
               color: customTheme.accentColor,
               thickness: 3,
               size: 0.94,
-              angleRadians: (getMinute(key, id, 0) + 0.0) * radiansPerTick,
+              angleRadians: getMinute(key, id, 0) * radiansPerTick,
             ),
             DrawnHand(
               color: customTheme.highlightColor,
               thickness: 3,
               size: 0.94,
-              angleRadians: (getMinute(key, id, 1) + 0.0) * radiansPerTick,
+              angleRadians: getMinute(key, id, 1) * radiansPerTick,
             ),
           ],
         ),
