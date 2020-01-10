@@ -11,6 +11,7 @@ import 'drawn_hand.dart';
 /// Total distance traveled by a second or a minute hand, each second or minute,
 /// respectively.
 final radiansPerTick = radians(360 / 60);
+enum Status { ShowTime, Animate, ProcessingTime }
 
 /// A basic analog clock.
 ///
@@ -26,21 +27,20 @@ class AnalogClock extends StatefulWidget {
 
 class _AnalogClockState extends State<AnalogClock> {
   var _now = DateTime.now(), customTheme;
-  Timer _timer, _timer1, _timer2, _timer3;
+  Timer _timer, _timer1, _timer2, _timer3, _timer4;
   DateTime _dateTime = DateTime.now();
-  String current = "Time";
-  List<String> hourList, minuteList, secondList;
+  var current = Status.ShowTime;
+  List<String> hourList, minuteList;
   Map<String, dynamic> timeMap, startingPoint, nextPoint;
-  bool isAnimating,
-      stopMinute1,
-      stopMinute2,
-      isTellingTime,
-      is24Format,
-      isTellingNextTime;
+  bool stopMinute1, stopMinute2, is24Format, isTellingNextTime = false;
 
   @override
   void initState() {
     super.initState();
+    timeMap = new Map<String, dynamic>();
+    startingPoint = new Map<String, dynamic>();
+    nextPoint = new Map<String, dynamic>();
+    nextPoint["next"] = "";
     widget.model.addListener(_updateModel);
 
     parseJsonFromAssets().then((onValue) {
@@ -50,6 +50,7 @@ class _AnalogClockState extends State<AnalogClock> {
     }).then((v) {
       // Set the initial values.
       _updateModel();
+      _repeater();
       _initiateTimeMachine(firstLaunch: true);
     });
   }
@@ -69,24 +70,14 @@ class _AnalogClockState extends State<AnalogClock> {
     _timer1?.cancel();
     _timer2?.cancel();
     _timer3?.cancel();
+    _timer4?.cancel();
     widget.model.removeListener(_updateModel);
     super.dispose();
   }
 
   void _updateModel() {
     setState(() {
-      if (isTellingNextTime) {
-        is24Format = widget.model.is24HourFormat;
-      }
-      /*   hourList = DateFormat(widget.model.is24HourFormat ? 'HH' : 'hh')
-          .format(_dateTime)
-          .split("");
-      minuteList = DateFormat('mm').format(_dateTime).split(""); */
-      //second = DateFormat('ss').format(_dateTime);
-      /* print("printing hms");
-      print(hour);
-      print(minute);
-      print(second); */
+      if (!isTellingNextTime) is24Format = widget.model.is24HourFormat;
     });
   }
 
@@ -101,75 +92,90 @@ class _AnalogClockState extends State<AnalogClock> {
     _dateTime = _now = DateTime.now();
 
     if (_now.second >= 0 && _now.second <= 30) {
-      current = "time";
-      /**
-       * set the value of time here without showing the 
-       * encircling animation so as to tell the use the time on the spot
-       **/
+      current = Status.ShowTime;
 
+      //Show the static time here for 30 seconds and then start animation.
+      // Getting the hour co-ordinates from the masterMap.
       hourList = DateFormat(widget.model.is24HourFormat ? 'HH' : 'hh')
           .format(_dateTime)
           .split("");
-      startingPoint["time1"] = timeMap["time"][hourList[0]];
-      startingPoint["time2"] = timeMap["time"][hourList[1]];
 
+      // Getting the minute co-ordinates from the masterMap.
       minuteList = DateFormat('mm').format(_dateTime).split("");
-      startingPoint["time3"] = timeMap["time"][minuteList[0]];
-      startingPoint["time4"] = timeMap["time"][minuteList[1]];
+      startingPoint.addAll({
+        "start": {
+          "time1": timeMap["time"][hourList[0]],
+          "time2": timeMap["time"][hourList[1]],
+          "time3": timeMap["time"][minuteList[0]],
+          "time4": timeMap["time"][minuteList[1]]
+        }
+      });
+
       stopMinute1 = stopMinute2 = true;
+      print("mainTime: " + DateTime.now().second.toString());
+      //print(startingPoint.toString());
 
       _timer1 = Timer(
         Duration(seconds: 31) - Duration(seconds: _now.second),
         _initiateTimeMachine,
       );
     } else if (_now.second > 30 && _now.second <= 58) {
-      /**
-       * Animation part
-       */
-      current = "animate";
+      // Animation part
+      current = Status.Animate;
+
       if (firstLaunch)
         startingPoint["start"] = timeMap["animate"];
       else {
         nextPoint["next"] = timeMap["animate"];
-        _timer2 =
-            Timer(Duration(seconds: 3, milliseconds: 600), _freeMinuteHand);
+
+        print("animate: " + DateTime.now().second.toString());
+
+        // we are waiting for the starting point to become similar to nextPoint processing inside -> getMinute() function.
+        _timer2 = Timer(Duration(seconds: 3, milliseconds: 600),
+            () => stopMinute1 = stopMinute2 = false);
       }
 
       _timer3 = Timer(
-          Duration(seconds: 58) - Duration(seconds: DateTime.now().second),
+          Duration(seconds: 59) - Duration(seconds: DateTime.now().second),
           _initiateTimeMachine);
-    } else {}
-  }
+    } else {
+      current = Status.ProcessingTime;
+      isTellingNextTime = true;
 
-  void _freeMinuteHand() {
-    stopMinute1 = stopMinute2 = false;
-  }
+      if (firstLaunch) startingPoint["start"] = timeMap["animate"];
 
-  void _updateTime() {
-    setState(() {
-      _dateTime = _now = DateTime.now();
-
-      hourList = DateFormat(widget.model.is24HourFormat ? 'HH' : 'hh')
-          .format(_dateTime)
-          .split("");
-      timeMap["time1"] = hourList[0];
-      timeMap["time2"] = hourList[1];
+      _dateTime = _dateTime.add(Duration(seconds: 30));
+      hourList =
+          DateFormat(is24Format ? 'HH' : 'hh').format(_dateTime).split("");
 
       minuteList = DateFormat('mm').format(_dateTime).split("");
-      timeMap["time3"] = minuteList[0];
-      timeMap["time4"] = minuteList[1];
-      // second = DateFormat('ss').format(_dateTime);
-      /*  print("printing hms");
-      print(hour);
-      print(minute);
-      print(second); */
 
-      // Update once per 30 milisecond. Make sure to do it at the beginning of each
-      // new second, so that the clock is accurate.
-      _timer = Timer(
-        Duration(minutes: 1) - Duration(seconds: _now.second),
-        _updateTime,
-      );
+      nextPoint.addAll({
+        "next": {
+          "time1": timeMap["time"][hourList[0]],
+          "time2": timeMap["time"][hourList[1]],
+          "time3": timeMap["time"][minuteList[0]],
+          "time4": timeMap["time"][minuteList[1]]
+        }
+      });
+
+      print("tellingTime: " + DateTime.now().second.toString());
+      // print(startingPoint.toString());
+      //print("nextPoint");
+      // print(nextPoint.toString());
+      _timer4 =
+          Timer(Duration(seconds: 3, milliseconds: 600), _initiateTimeMachine);
+    }
+  }
+
+  void _repeater() {
+    setState(() {
+      // second = DateFormat('ss').format(_dateTime);
+      // Update once per 30 milisecond So, as to increament the minute hand.
+      /*  _timer = Timer(
+        Duration(milliseconds: 3000),
+        _repeater,
+      ); */
     });
   }
 
@@ -460,7 +466,9 @@ class _AnalogClockState extends State<AnalogClock> {
   }
 
   double getMinute(String key, String id, int index) {
-    if (key != "other" &&
+    return 37.0;
+
+    /* if (key != "other" &&
         startingPoint != null &&
         startingPoint.containsKey("time") &&
         (key == "time1" ||
@@ -468,7 +476,7 @@ class _AnalogClockState extends State<AnalogClock> {
             key == "time3" ||
             key == "time4")) {
       var startValue = startingPoint[key][id][index];
-      var nextValue = nextPoint[key][id][index];
+      var nextValue = nextPoint["next"][key][id][index];
       if (stopMinute1 && stopMinute2 && startValue == nextValue) {
       } else {}
       /*  print(timeMap["time1"].toString() +
@@ -485,7 +493,7 @@ class _AnalogClockState extends State<AnalogClock> {
       return timeMap["time"][timeMap[key]][id][index] + 0.0;
     } else {
       return 37.0;
-    }
+    } */
   }
 
   Widget getSimpleClock({String key = "other", @required String id}) {
