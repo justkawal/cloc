@@ -31,7 +31,7 @@ class _AnalogClockState extends State<AnalogClock> {
   DateTime _dateTime = DateTime.now();
   var current = Status.ShowTime;
   List<String> hourList, minuteList;
-  Map<String, dynamic> timeMap, startingPoint, nextPoint;
+  Map<String, dynamic> timeMap, startingPoint, nextPoint, otherMap;
   bool stopMinute1, stopMinute2, is24Format, isTellingNextTime = false;
 
   @override
@@ -40,7 +40,10 @@ class _AnalogClockState extends State<AnalogClock> {
     timeMap = new Map<String, dynamic>();
     startingPoint = new Map<String, dynamic>();
     nextPoint = new Map<String, dynamic>();
-    nextPoint["next"] = "";
+    otherMap = new Map<String, dynamic>();
+    otherMap = Map.fromIterable(List.generate(93, (index) => index),
+        key: (v) => (v + 1).toString(), value: (v) => [37.0, 37.0]);
+    //print(otherMap.toString());
     widget.model.addListener(_updateModel);
 
     parseJsonFromAssets().then((onValue) {
@@ -104,6 +107,7 @@ class _AnalogClockState extends State<AnalogClock> {
       minuteList = DateFormat('mm').format(_dateTime).split("");
       startingPoint.addAll({
         "start": {
+          "other": otherMap,
           "time1": timeMap["time"][hourList[0]],
           "time2": timeMap["time"][hourList[1]],
           "time3": timeMap["time"][minuteList[0]],
@@ -113,7 +117,9 @@ class _AnalogClockState extends State<AnalogClock> {
 
       stopMinute1 = stopMinute2 = true;
       print("mainTime: " + DateTime.now().second.toString());
-      //print(startingPoint.toString());
+      print(startingPoint.toString());
+
+      setState(() {});
 
       _timer1 = Timer(
         Duration(seconds: 31) - Duration(seconds: _now.second),
@@ -124,16 +130,20 @@ class _AnalogClockState extends State<AnalogClock> {
       current = Status.Animate;
 
       if (firstLaunch)
-        startingPoint["start"] = timeMap["animate"];
+        startingPoint.addAll({"start": timeMap["animate"]});
       else {
-        nextPoint["next"] = timeMap["animate"];
+        nextPoint.addAll({"next": timeMap["animate"]});
 
         print("animate: " + DateTime.now().second.toString());
+        print(startingPoint.toString());
+        setState(() {});
 
         // we are waiting for the starting point to become similar to nextPoint processing inside -> getMinute() function.
         _timer2 = Timer(Duration(seconds: 3, milliseconds: 600),
             () => stopMinute1 = stopMinute2 = false);
       }
+
+      setState(() {});
 
       _timer3 = Timer(
           Duration(seconds: 59) - Duration(seconds: DateTime.now().second),
@@ -142,7 +152,7 @@ class _AnalogClockState extends State<AnalogClock> {
       current = Status.ProcessingTime;
       isTellingNextTime = true;
 
-      if (firstLaunch) startingPoint["start"] = timeMap["animate"];
+      if (firstLaunch) startingPoint.addAll({"start": timeMap["animate"]});
 
       _dateTime = _dateTime.add(Duration(seconds: 30));
       hourList =
@@ -152,6 +162,7 @@ class _AnalogClockState extends State<AnalogClock> {
 
       nextPoint.addAll({
         "next": {
+          "other": otherMap,
           "time1": timeMap["time"][hourList[0]],
           "time2": timeMap["time"][hourList[1]],
           "time3": timeMap["time"][minuteList[0]],
@@ -160,7 +171,8 @@ class _AnalogClockState extends State<AnalogClock> {
       });
 
       print("tellingTime: " + DateTime.now().second.toString());
-      // print(startingPoint.toString());
+      print(startingPoint.toString());
+      setState(() {});
       //print("nextPoint");
       // print(nextPoint.toString());
       _timer4 =
@@ -172,10 +184,10 @@ class _AnalogClockState extends State<AnalogClock> {
     setState(() {
       // second = DateFormat('ss').format(_dateTime);
       // Update once per 30 milisecond So, as to increament the minute hand.
-      /*  _timer = Timer(
+      _timer = Timer(
         Duration(milliseconds: 3000),
         _repeater,
-      ); */
+      );
     });
   }
 
@@ -466,34 +478,28 @@ class _AnalogClockState extends State<AnalogClock> {
   }
 
   double getMinute(String key, String id, int index) {
-    return 37.0;
+    if (current == Status.ShowTime) {
+      // ShowTime
+      return startingPoint["start"][key][id][index];
+    } else if (current == Status.Animate) {
+      var start = startingPoint["start"][key][id][index],
+          next = nextPoint["next"][key][id][index];
 
-    /* if (key != "other" &&
-        startingPoint != null &&
-        startingPoint.containsKey("time") &&
-        (key == "time1" ||
-            key == "time2" ||
-            key == "time3" ||
-            key == "time4")) {
-      var startValue = startingPoint[key][id][index];
-      var nextValue = nextPoint["next"][key][id][index];
-      if (stopMinute1 && stopMinute2 && startValue == nextValue) {
-      } else {}
-      /*  print(timeMap["time1"].toString() +
-          timeMap["time2"].toString() +
-          ":" +
-          timeMap["time3"].toString() +
-          timeMap["time4"].toString()); */
-      /* if (timeMap["time"][timeMap[key]][id][index] == 59.5) {
-        timeMap["time"][timeMap[key]][id][index]  = 0.0;
-      } else
-        timeMap["time"][timeMap[key]][id][index]  += 0.5; */
-      //print(timeMap["time"]["2"][id][index].toString());
-
-      return timeMap["time"][timeMap[key]][id][index] + 0.0;
+      if (start != next && !stopMinute1 && !stopMinute2) {
+        startingPoint["start"][key][id][index] += 0.5;
+      }
+      return startingPoint["start"][key][id][index];
     } else {
-      return 37.0;
-    } */
+      // ProcessingTime
+
+      var start = startingPoint["start"][key][id][index],
+          next = nextPoint["next"][key][id][index];
+
+      if (start != next && !stopMinute1 && !stopMinute2) {
+        startingPoint["start"][key][id][index] += 0.5;
+      }
+      return startingPoint["start"][key][id][index];
+    }
   }
 
   Widget getSimpleClock({String key = "other", @required String id}) {
@@ -513,13 +519,13 @@ class _AnalogClockState extends State<AnalogClock> {
               color: customTheme.accentColor,
               thickness: 3,
               size: 0.94,
-              angleRadians: getMinute(key, id, 0) * radiansPerTick,
+              angleRadians: (getMinute(key, id, 0) + 0.0) * radiansPerTick,
             ),
             DrawnHand(
               color: customTheme.highlightColor,
               thickness: 3,
               size: 0.94,
-              angleRadians: getMinute(key, id, 1) * radiansPerTick,
+              angleRadians: (getMinute(key, id, 1) + 0.0) * radiansPerTick,
             ),
           ],
         ),
