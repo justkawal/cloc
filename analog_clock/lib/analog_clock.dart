@@ -32,7 +32,7 @@ class _AnalogClockState extends State<AnalogClock> {
   var current = Status.ShowTime;
   List<String> hourList, minuteList;
   Map<String, dynamic> timeMap, startingPoint, nextPoint, otherMap;
-  bool stopMinute1, stopMinute2, is24Format, isTellingNextTime = false;
+  bool stopMinute1, stopMinute2, is24Format = true, isTellingNextTime = false;
 
   @override
   void initState() {
@@ -52,8 +52,8 @@ class _AnalogClockState extends State<AnalogClock> {
     }).then((v) {
       // Set the initial values.
       _updateModel();
-      _repeater();
       _initiateTimeMachine(firstLaunch: true);
+      _repeater();
     });
   }
 
@@ -98,9 +98,8 @@ class _AnalogClockState extends State<AnalogClock> {
 
       //Show the static time here for 30 seconds and then start animation.
       // Getting the hour co-ordinates from the masterMap.
-      hourList = DateFormat(widget.model.is24HourFormat ? 'HH' : 'hh')
-          .format(_dateTime)
-          .split("");
+      hourList =
+          DateFormat(is24Format ? 'HH' : 'hh').format(_dateTime).split("");
 
       // Getting the minute co-ordinates from the masterMap.
       minuteList = DateFormat('mm').format(_dateTime).split("");
@@ -116,9 +115,7 @@ class _AnalogClockState extends State<AnalogClock> {
 
       stopMinute1 = stopMinute2 = true;
       print("mainTime: " + DateTime.now().second.toString());
-      print(startingPoint.toString());
-
-      setState(() {});
+      //print(startingPoint.toString());
 
       _timer1 = Timer(
         Duration(seconds: 31) - Duration(seconds: _now.second),
@@ -134,22 +131,19 @@ class _AnalogClockState extends State<AnalogClock> {
         nextPoint.addAll({"next": timeMap["animate"]});
 
         print("animate: " + DateTime.now().second.toString());
-        print(startingPoint.toString());
-        setState(() {});
+        //print(startingPoint.toString());
 
         // we are waiting for the starting point to become similar to nextPoint processing inside -> getMinute() function.
         _timer2 = Timer(Duration(seconds: 3, milliseconds: 600),
             () => stopMinute1 = stopMinute2 = false);
       }
 
-      setState(() {});
-
       _timer3 = Timer(
           Duration(seconds: 59) - Duration(seconds: DateTime.now().second),
           _initiateTimeMachine);
     } else {
       current = Status.ProcessingTime;
-      isTellingNextTime = true;
+      stopMinute1 = stopMinute2 = isTellingNextTime = true;
 
       if (firstLaunch) startingPoint.addAll({"start": timeMap["animate"]});
 
@@ -170,8 +164,7 @@ class _AnalogClockState extends State<AnalogClock> {
       });
 
       print("tellingTime: " + DateTime.now().second.toString());
-      print(startingPoint.toString());
-      setState(() {});
+      //print(startingPoint.toString());
       _timer4 =
           Timer(Duration(seconds: 3, milliseconds: 600), _initiateTimeMachine);
     }

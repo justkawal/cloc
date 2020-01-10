@@ -38,17 +38,16 @@ class DrawnHand extends Hand {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child:
-           SizedBox.expand(child:
-          CustomPaint(
-        painter: _HandPainter(
-          handSize: size,
-          lineWidth: thickness,
-          angleRadians: angleRadians,
-          color: color,
+      child: SizedBox.expand(
+        child: CustomPaint(
+          painter: _HandPainter(
+            handSize: size,
+            lineWidth: thickness,
+            angleRadians: angleRadians,
+            color: color,
+          ),
         ),
       ),
-       ),
     );
   }
 }
@@ -89,9 +88,10 @@ class _HandPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_HandPainter oldDelegate) {
-    return oldDelegate.handSize != handSize ||
+    return true /* oldDelegate.handSize != handSize ||
         oldDelegate.lineWidth != lineWidth ||
         oldDelegate.angleRadians != angleRadians ||
-        oldDelegate.color != color;
+        oldDelegate.color != color */
+        ;
   }
 }
