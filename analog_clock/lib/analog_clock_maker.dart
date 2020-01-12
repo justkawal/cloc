@@ -21,16 +21,12 @@ class AnalogClockMaker extends StatefulWidget {
 }
 
 class _AnalogClockMakerState extends State<AnalogClockMaker> {
-  DateTime datetime;
   var customTheme;
+  double blackMinutes = 37.0, blueMinutes = 37.0, anim1, anim2;
+  int freeBlack, freeBlue, changeAnimation;
 
-  int second = 30, minute = 15;
-  double blackMinutes = 0.0, blueMinutes = 0.0;
-  int freeBlack, freeBlue;
-  DateTime d = DateTime(2019, 1, 1, 9, 12, 15, 0);
-  //_AnalogClockMakerState(datetime) : this.datetime = datetime ?? DateTime.now();
-
-  initState() {
+  @override
+  void initState() {
     super.initState();
     customTheme = widget.customTheme;
     blackMinutes = widget.blackMin;
@@ -38,58 +34,31 @@ class _AnalogClockMakerState extends State<AnalogClockMaker> {
     freeBlack = widget.freeBlack;
     freeBlue = widget.freeBlue;
 
-    // update clock every second or minute based on second hand's visibility.
     Timer.periodic(Duration(milliseconds: 30), (Timer timer) {
       if (mounted) {
-        // update is only called on live clocks. So, it's safe to update datetime.
-        /* if (second == 60) {
-        //minute += 1;
-        //print("plus 1 minute");
-      } else {
-        print("plus 30");
-      } */
         if (widget.freeBlack == 1 && widget.freeBlue == 1) {
-          if (blackMinutes == 59.5) {
+          if (blackMinutes == 59.5)
             blackMinutes = 0.0;
-          } else {
+          else
             blackMinutes += 0.5;
-          }
-          if (blueMinutes == 59.5) {
+          if (blueMinutes == 59.5)
             blueMinutes = 0.0;
-          } else {
+          else
             blueMinutes += 0.5;
-          }
         } else {
           if (blackMinutes != widget.blackMin) {
-            if (blackMinutes == 59.5) {
+            if (blackMinutes == 59.5)
               blackMinutes = 0.0;
-            } else {
+            else
               blackMinutes += 0.5;
-            }
           }
-
           if (blueMinutes != widget.blueMin) {
-            if (blueMinutes == 59.5) {
+            if (blueMinutes == 59.5)
               blueMinutes = 0.0;
-            } else {
+            else
               blueMinutes += 0.5;
-            }
           }
         }
-        /* if (widget.moveTogether) {
-            blackMinutes -= second / 60;
-            blueMinutes -= second / 60;
-          } else {
-            if (!widget.stopBlack) blackMinutes -= second / 60;
-            if (!widget.stopBlue) blueMinutes += second / 60;
-          }
-          if (blackMinutes < 0.0) blackMinutes += 60;
-
-          if (blueMinutes > 60.0) blueMinutes -= 60; */
-
-        //d = DateTime(2019, 1, 1, 9, minute, second);
-        //datetime = d; //DateTime.now();
-
         setState(() {});
       }
     });

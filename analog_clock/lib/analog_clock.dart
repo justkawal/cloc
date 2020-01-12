@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 import 'package:analog_clock/analog_clock_maker.dart';
 import 'package:flutter_clock_helper/model.dart';
 import 'package:flutter/material.dart';
@@ -53,7 +54,6 @@ class _AnalogClockState extends State<AnalogClock> {
       // Set the initial values.
       _updateModel();
       _initiateTimeMachine(firstLaunch: true);
-      _repeater();
     });
   }
 
@@ -89,7 +89,7 @@ class _AnalogClockState extends State<AnalogClock> {
         .then((jsonStr) => jsonDecode(jsonStr));
   }
 
-  void _freeMinuteHand() {
+  void _freeHands() {
     free[0] = free[1] = 1;
     setState(() {});
   }
@@ -102,7 +102,7 @@ class _AnalogClockState extends State<AnalogClock> {
         //launchType = firstLaunch;
         free[0] = free[1] = 0;
 
-        debugPrint("1st-1-=-=-=-Next Point" + nextPoint.toString());
+        //debugPrint("1st-1-=-=-=-Next Point" + nextPoint.toString());
         List<String> hourList =
                 DateFormat(is24Format ? 'HH' : 'hh').format(_now).split(""),
             minuteList = DateFormat('mm').format(_now).split("");
@@ -114,17 +114,20 @@ class _AnalogClockState extends State<AnalogClock> {
           "time4": new Map.unmodifiable(timeMap["time"][minuteList[1]])
         });
       });
-      debugPrint("1st-2-=-=-=-Next Point" + nextPoint.toString());
+      //debugPrint("1st-2-=-=-=-Next Point" + nextPoint.toString());
 
       _timer1 = Timer(
         Duration(seconds: 31) - Duration(seconds: _now.second),
         _initiateTimeMachine,
       );
     } else if (_now.second >= 31 && _now.second <= 55) {
-      debugPrint("2nd-1-=-=-=-Next Point" + nextPoint.toString());
-      nextPoint['next'] = new Map.unmodifiable(timeMap["animate"]);
-      debugPrint("2nd-2-=-=-=-Next Point" + nextPoint.toString());
-      _timer2 = Timer(Duration(seconds: 3, milliseconds: 600), _freeMinuteHand);
+      setState(() {
+        nextPoint['next'] = new Map.unmodifiable(timeMap["animate"]);
+        _timer2 = Timer(Duration(seconds: 4, milliseconds: 600), _freeHands);
+      });
+      //debugPrint("2nd-1-=-=-=-Next Point" + nextPoint.toString());
+      //debugPrint("2nd-2-=-=-=-Next Point" + nextPoint.toString());
+
       setState(() {});
 
       _timer3 = Timer(
@@ -141,7 +144,7 @@ class _AnalogClockState extends State<AnalogClock> {
                 .split(""),
             minuteList = DateFormat('mm').format(_dateTime).split("");
 
-        debugPrint("3rd-1-=-=-=-Next Point" + nextPoint.toString());
+        //debugPrint("3rd-1-=-=-=-Next Point" + nextPoint.toString());
         nextPoint['next'] = new Map.unmodifiable({
           "other": new Map.unmodifiable(otherMap),
           "time1": new Map.unmodifiable(timeMap["time"][hourList[0]]),
@@ -150,20 +153,11 @@ class _AnalogClockState extends State<AnalogClock> {
           "time4": new Map.unmodifiable(timeMap["time"][minuteList[1]])
         });
 
-        debugPrint("3rd-2-=-=-=-Next Point" + nextPoint.toString());
+        //debugPrint("3rd-2-=-=-=-Next Point" + nextPoint.toString());
       });
-
       _timer4 =
           Timer(Duration(seconds: 4, milliseconds: 600), _initiateTimeMachine);
     }
-  }
-
-  void _repeater() {
-    print(DateTime.now().second.toString());
-    Timer(
-        Duration(seconds: 1) -
-            Duration(milliseconds: DateTime.now().millisecond),
-        _repeater);
   }
 
   @override
@@ -422,9 +416,9 @@ class _AnalogClockState extends State<AnalogClock> {
     return AnalogClockMaker(
       customTheme: customTheme,
       blackMin:
-          _getStatus(key, id, 0) ? nextPoint['next'][key][id][0] + 0.0 : 0.0,
+          _getStatus(key, id, 0) ? nextPoint['next'][key][id][0] + 0.0 : 45.0,
       blueMin:
-          _getStatus(key, id, 1) ? nextPoint['next'][key][id][1] + 0.0 : 0.0,
+          _getStatus(key, id, 1) ? nextPoint['next'][key][id][1] + 0.0 : 45.0,
       freeBlack: free[0],
       freeBlue: free[1],
     );
