@@ -96,6 +96,7 @@ class _AnalogClockState extends State<AnalogClock> {
 
   void _initiateTimeMachine({bool firstLaunch = false}) {
     _now = DateTime.now();
+    isTellingNextTime = false;
 
     if (_now.second > 0 && _now.second <= 30) {
       setState(() {
@@ -175,13 +176,11 @@ class _AnalogClockState extends State<AnalogClock> {
             primaryColor: Colors.black12,
             // hand color.
             highlightColor: Colors.black,
-            accentColor: Color(0xFF669DF6),
-            backgroundColor: Colors.white)
+            accentColor: Color(0xFF669DF6))
         : Theme.of(context).copyWith(
             primaryColor: Colors.white12,
             highlightColor: Colors.white,
-            accentColor: Color(0xFF8AB4F8),
-            backgroundColor: Colors.black);
+            accentColor: Color(0xFF8AB4F8));
 
     return Semantics.fromProperties(
         properties: SemanticsProperties(label: 'Digital clock with time.'
@@ -414,7 +413,9 @@ class _AnalogClockState extends State<AnalogClock> {
 
   Widget getSimpleClock(String id, {String key = "other"}) {
     return AnalogClockMaker(
-      customTheme: customTheme,
+      primaryColor: customTheme.primaryColor,
+      highlightColor: customTheme.highlightColor,
+      accentColor: customTheme.accentColor,
       blackMin:
           _getStatus(key, id, 0) ? nextPoint['next'][key][id][0] + 0.0 : 45.0,
       blueMin:

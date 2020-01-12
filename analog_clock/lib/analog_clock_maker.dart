@@ -6,14 +6,16 @@ import 'drawn_hand.dart';
 class AnalogClockMaker extends StatefulWidget {
   final int freeBlack, freeBlue;
   final double blackMin, blueMin;
-  final customTheme;
+  final Color primaryColor, highlightColor, accentColor;
 
   const AnalogClockMaker({
-    @required this.customTheme,
     @required this.blackMin,
     @required this.blueMin,
     @required this.freeBlack,
     @required this.freeBlue,
+    @required this.primaryColor,
+    @required this.accentColor,
+    @required this.highlightColor,
   });
 
   @override
@@ -21,18 +23,20 @@ class AnalogClockMaker extends StatefulWidget {
 }
 
 class _AnalogClockMakerState extends State<AnalogClockMaker> {
-  var customTheme;
   double blackMinutes = 37.0, blueMinutes = 37.0, anim1, anim2;
   int freeBlack, freeBlue, changeAnimation;
+  Color primaryColor, highlightColor, accentColor;
 
   @override
   void initState() {
     super.initState();
-    customTheme = widget.customTheme;
     blackMinutes = widget.blackMin;
     blueMinutes = widget.blueMin;
     freeBlack = widget.freeBlack;
     freeBlue = widget.freeBlue;
+    primaryColor = widget.primaryColor;
+    highlightColor = widget.highlightColor;
+    accentColor = widget.accentColor;
 
     Timer.periodic(Duration(milliseconds: 30), (Timer timer) {
       if (mounted) {
@@ -69,20 +73,20 @@ class _AnalogClockMakerState extends State<AnalogClockMaker> {
     return Flexible(
       child: Container(
         decoration: BoxDecoration(
-            border: Border.all(width: 1.0, color: customTheme.primaryColor),
+            border: Border.all(width: 1.0, color: widget.primaryColor),
             color: Colors.transparent,
             shape: BoxShape.circle),
         child: Stack(
           children: [
             // Example of a hand drawn with [CustomPainter].
             DrawnHand(
-              color: customTheme.accentColor,
+              color: widget.accentColor,
               thickness: 3,
               size: 0.94,
               angleRadians: blackMinutes * radians(360 / 60),
             ),
             DrawnHand(
-              color: customTheme.highlightColor,
+              color: widget.highlightColor,
               thickness: 3,
               size: 0.94,
               angleRadians: blueMinutes * radians(360 / 60),
