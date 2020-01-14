@@ -98,12 +98,12 @@ class _AnalogClockState extends State<AnalogClock> {
     _now = DateTime.now();
     isTellingNextTime = false;
 
-    if (_now.second > 0 && _now.second <= 30) {
+    if (false /* (_now.second > 0 && _now.second <= 20) ||
+        (_now.second > 30 && _now.second <= 40) */
+        ) {
       setState(() {
         //launchType = firstLaunch;
         free[0] = free[1] = 0;
-
-        //debugPrint("1st-1-=-=-=-Next Point" + nextPoint.toString());
         List<String> hourList =
                 DateFormat(is24Format ? 'HH' : 'hh').format(_now).split(""),
             minuteList = DateFormat('mm').format(_now).split("");
@@ -115,26 +115,27 @@ class _AnalogClockState extends State<AnalogClock> {
           "time4": new Map.unmodifiable(timeMap["time"][minuteList[1]])
         });
       });
-      //debugPrint("1st-2-=-=-=-Next Point" + nextPoint.toString());
-
       _timer1 = Timer(
-        Duration(seconds: 31) - Duration(seconds: _now.second),
+        Duration(seconds: _now.second > 0 && _now.second <= 20 ? 21 : 41) -
+            Duration(seconds: _now.second),
         _initiateTimeMachine,
       );
-    } else if (_now.second >= 31 && _now.second <= 55) {
+    } else if (true /* (_now.second >= 21 && _now.second <= 30) ||
+        (_now.second >= 41 && _now.second <= 56) */
+        ) {
       setState(() {
-        nextPoint['next'] = new Map.unmodifiable(timeMap["animate"]);
-        _timer2 = Timer(Duration(seconds: 4, milliseconds: 600), _freeHands);
+        nextPoint['next'] = new Map.unmodifiable(timeMap["animate1"]);
+       // _timer2 = Timer(Duration(seconds: 4, milliseconds: 600), _freeHands);
       });
-      //debugPrint("2nd-1-=-=-=-Next Point" + nextPoint.toString());
-      //debugPrint("2nd-2-=-=-=-Next Point" + nextPoint.toString());
 
       setState(() {});
 
-      _timer3 = Timer(
-          Duration(seconds: 56) - Duration(seconds: DateTime.now().second),
-          _initiateTimeMachine);
-    } else {
+      /* _timer3 = Timer(
+          Duration(
+                  seconds: (_now.second >= 21 && _now.second <= 30) ? 31 : 57) -
+              Duration(seconds: DateTime.now().second),
+          _initiateTimeMachine); */
+    } else if (false) {
       setState(() {
         free[0] = free[1] = 0;
         isTellingNextTime = true;
@@ -145,7 +146,6 @@ class _AnalogClockState extends State<AnalogClock> {
                 .split(""),
             minuteList = DateFormat('mm').format(_dateTime).split("");
 
-        //debugPrint("3rd-1-=-=-=-Next Point" + nextPoint.toString());
         nextPoint['next'] = new Map.unmodifiable({
           "other": new Map.unmodifiable(otherMap),
           "time1": new Map.unmodifiable(timeMap["time"][hourList[0]]),
@@ -153,8 +153,6 @@ class _AnalogClockState extends State<AnalogClock> {
           "time3": new Map.unmodifiable(timeMap["time"][minuteList[0]]),
           "time4": new Map.unmodifiable(timeMap["time"][minuteList[1]])
         });
-
-        //debugPrint("3rd-2-=-=-=-Next Point" + nextPoint.toString());
       });
       _timer4 =
           Timer(Duration(seconds: 4, milliseconds: 600), _initiateTimeMachine);

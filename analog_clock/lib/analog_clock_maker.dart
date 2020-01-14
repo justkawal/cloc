@@ -41,20 +41,20 @@ class _AnalogClockMakerState extends State<AnalogClockMaker> {
     Timer.periodic(Duration(milliseconds: 30), (Timer timer) {
       if (mounted) {
         if (widget.freeBlack == 1 && widget.freeBlue == 1) {
-          if (blackMinutes == 59.5)
-            blackMinutes = 0.0;
+          if (blackMinutes == 0.0)
+            blackMinutes = 59.5;
           else
-            blackMinutes += 0.5;
+            blackMinutes -= 0.5;
           if (blueMinutes == 59.5)
             blueMinutes = 0.0;
           else
             blueMinutes += 0.5;
         } else {
           if (blackMinutes != widget.blackMin) {
-            if (blackMinutes == 59.5)
-              blackMinutes = 0.0;
+            if (blackMinutes == 0.0)
+              blackMinutes = 59.5;
             else
-              blackMinutes += 0.5;
+              blackMinutes -= 0.5;
           }
           if (blueMinutes != widget.blueMin) {
             if (blueMinutes == 59.5)
