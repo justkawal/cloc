@@ -98,9 +98,8 @@ class _AnalogClockState extends State<AnalogClock> {
     _now = DateTime.now();
     isTellingNextTime = false;
 
-    if (false /* (_now.second > 0 && _now.second <= 20) ||
-        (_now.second > 30 && _now.second <= 40) */
-        ) {
+    if ((_now.second > 0 && _now.second <= 20) ||
+        (_now.second > 30 && _now.second <= 40)) {
       setState(() {
         //launchType = firstLaunch;
         free[0] = free[1] = 0;
@@ -120,22 +119,22 @@ class _AnalogClockState extends State<AnalogClock> {
             Duration(seconds: _now.second),
         _initiateTimeMachine,
       );
-    } else if (true /* (_now.second >= 21 && _now.second <= 30) ||
-        (_now.second >= 41 && _now.second <= 56) */
-        ) {
+    } else if ((_now.second >= 21 && _now.second <= 30) ||
+        (_now.second >= 41 && _now.second <= 56)) {
       setState(() {
-        nextPoint['next'] = new Map.unmodifiable(timeMap["animate1"]);
-       // _timer2 = Timer(Duration(seconds: 4, milliseconds: 600), _freeHands);
+        nextPoint['next'] = new Map.unmodifiable(
+            timeMap["animate" + (new Random().nextInt(2)).toString()]);
+        _timer2 = Timer(Duration(seconds: 4, milliseconds: 600), _freeHands);
       });
 
       setState(() {});
 
-      /* _timer3 = Timer(
+      _timer3 = Timer(
           Duration(
                   seconds: (_now.second >= 21 && _now.second <= 30) ? 31 : 57) -
               Duration(seconds: DateTime.now().second),
-          _initiateTimeMachine); */
-    } else if (false) {
+          _initiateTimeMachine);
+    } else {
       setState(() {
         free[0] = free[1] = 0;
         isTellingNextTime = true;
