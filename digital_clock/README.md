@@ -2,6 +2,7 @@
 
 This app is an example of a digital clock.
 It has a light theme and a dark theme.
+It is made with love and creativity for Google.
 
 <img src='digital.gif' width='350'>
 
