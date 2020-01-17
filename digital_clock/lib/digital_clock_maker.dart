@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:vector_math/vector_math_64.dart' show radians;
 import 'drawn_hand.dart';
 
-class AnalogClockMaker extends StatefulWidget {
+class DigitalClockMaker extends StatefulWidget {
   final int freeBlack, freeBlue;
   final double blackMin, blueMin;
   final Color primaryColor, highlightColor, accentColor;
 
-  const AnalogClockMaker({
+  const DigitalClockMaker({
     @required this.blackMin,
     @required this.blueMin,
     @required this.freeBlack,
@@ -19,10 +19,10 @@ class AnalogClockMaker extends StatefulWidget {
   });
 
   @override
-  _AnalogClockMakerState createState() => _AnalogClockMakerState();
+  _DigitalClockMakerState createState() => _DigitalClockMakerState();
 }
 
-class _AnalogClockMakerState extends State<AnalogClockMaker> {
+class _DigitalClockMakerState extends State<DigitalClockMaker> {
   double blackMinutes = 37.0, blueMinutes = 37.0, anim1, anim2;
   int freeBlack, freeBlue, changeAnimation;
   Color primaryColor, highlightColor, accentColor;
@@ -78,7 +78,6 @@ class _AnalogClockMakerState extends State<AnalogClockMaker> {
             shape: BoxShape.circle),
         child: Stack(
           children: [
-            // Example of a hand drawn with [CustomPainter].
             DrawnHand(
               color: widget.accentColor,
               thickness: 3,
