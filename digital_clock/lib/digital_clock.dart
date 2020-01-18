@@ -173,7 +173,7 @@ class _DigitalClockState extends State<DigitalClock> {
     // There are many ways to apply themes to your clock.
     customTheme = Theme.of(context).brightness == Brightness.light
         ? Theme.of(context).copyWith(
-            primaryColor: Colors.grey[200], // small clocks boundary
+            primaryColor: Colors.grey[200], // Boundary of Small Clocks
             highlightColor:
                 Colors.black54, // Background Color when showing time
             focusColor: Colors.black26, // Color when showing time
