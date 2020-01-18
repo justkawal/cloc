@@ -6,6 +6,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 import 'package:digital_clock/digital_clock_maker.dart';
+import 'package:digital_clock/get_google.dart';
 import 'package:flutter_clock_helper/model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -35,13 +36,18 @@ class _DigitalClockState extends State<DigitalClock> {
   var current = Status.ShowTime;
   Timer _timer, _timer1, _timer2, _timer3, _timer4;
   DateTime _dateTime = DateTime.now();
-  Map timeMap = {}, startingPoint = {}, nextPoint = {}, otherMap = {};
+  Map timeMap = {},
+      startingPoint = {},
+      nextPoint = {},
+      otherMap = {},
+      starter = {};
   List<int> free = [0, 0];
   bool is24Format = true, isTellingNextTime = false;
 
   @override
   void initState() {
     super.initState();
+    starter = GetGoogle().getGoogle();
     otherMap = new Map.unmodifiable(new Map.fromIterable(
         List.generate(93, (index) => index),
         key: (v) => (v + 1).toString(),
@@ -53,7 +59,7 @@ class _DigitalClockState extends State<DigitalClock> {
     }).then((v) {
       // Set the initial values.
       _updateModel();
-      _initiateTimeMachine(firstLaunch: true);
+      //_initiateTimeMachine(firstLaunch: true);
     });
   }
 
@@ -175,7 +181,7 @@ class _DigitalClockState extends State<DigitalClock> {
             primaryColor: Colors.grey[200],
             // hand color.
             highlightColor: Colors.black,
-            accentColor: Colors.green)
+            accentColor: Colors.black)
         : Theme.of(context).copyWith(
             primaryColor: Colors.grey[800],
             highlightColor: Colors.white54,
@@ -473,10 +479,12 @@ class _DigitalClockState extends State<DigitalClock> {
           : current == Status.Animate
               ? customTheme.highlightColor
               : customTheme.accentColor,
-      blackMin:
-          _getStatus(key, id, 0) ? nextPoint['next'][key][id][0] + 0.0 : 45.0,
-      blueMin:
-          _getStatus(key, id, 1) ? nextPoint['next'][key][id][1] + 0.0 : 45.0,
+      blackMin: /* _getStatus(key, id, 0)
+          ? nextPoint['next'][key][id][0] + 0.0
+          :  */starter[key][id][0],
+      blueMin: /* _getStatus(key, id, 1)
+          ? nextPoint['next'][key][id][1] + 0.0
+          : */ starter[key][id][1],
       freeBlack: free[0],
       freeBlue: free[1],
     );
