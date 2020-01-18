@@ -14,11 +14,10 @@ import 'package:flutter/semantics.dart';
 import 'package:vector_math/vector_math_64.dart' show radians;
 import 'package:flutter/services.dart' show rootBundle;
 
-/// Total distance traveled by a second or a minute hand, each second or minute,
-/// respectively.
+/// Total distance travelled by a minute hand.
 final radiansPerTick = radians(360 / 60);
 
-/// A basic analog clock.
+/// A basic digital clock.
 ///
 /// You can add more animations to make it better!
 class DigitalClock extends StatefulWidget {
@@ -248,7 +247,6 @@ class _DigitalClockState extends State<DigitalClock> {
             child: Row(
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                // layer 3
                 getSimpleClock("35"),
                 getSimpleClock("36"),
                 // first time
@@ -279,7 +277,6 @@ class _DigitalClockState extends State<DigitalClock> {
             child: Row(
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                // layer 3
                 getSimpleClock("40"),
                 getSimpleClock("41"),
                 // first time
@@ -310,7 +307,6 @@ class _DigitalClockState extends State<DigitalClock> {
             child: Row(
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                // layer 3
                 getSimpleClock("45"),
                 getSimpleClock("46"),
                 // first time
@@ -341,7 +337,6 @@ class _DigitalClockState extends State<DigitalClock> {
             child: Row(
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                // layer 3
                 getSimpleClock("50"),
                 getSimpleClock("51"),
                 // first time
@@ -372,7 +367,6 @@ class _DigitalClockState extends State<DigitalClock> {
             child: Row(
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                // layer 3
                 getSimpleClock("55"),
                 getSimpleClock("56"),
                 // first time

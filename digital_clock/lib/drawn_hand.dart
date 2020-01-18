@@ -66,9 +66,7 @@ class _HandPainter extends CustomPainter {
         assert(handSize >= 0.0),
         assert(handSize <= 1.0);
 
-  double handSize;
-  double lineWidth;
-  double angleRadians;
+  double handSize, lineWidth, angleRadians;
   Color color;
 
   @override
@@ -88,10 +86,9 @@ class _HandPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_HandPainter oldDelegate) {
-    return true /* oldDelegate.handSize != handSize ||
+    return oldDelegate.handSize != handSize ||
         oldDelegate.lineWidth != lineWidth ||
         oldDelegate.angleRadians != angleRadians ||
-        oldDelegate.color != color */
-        ;
+        oldDelegate.color != color;
   }
 }

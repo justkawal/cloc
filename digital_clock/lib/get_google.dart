@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 /// A base class for an starter point provider until the time.json loads.
-///
 class GetGoogle {
   Map getGoogle() {
     return {
