@@ -17,7 +17,6 @@ import 'package:flutter/services.dart' show rootBundle;
 /// Total distance traveled by a second or a minute hand, each second or minute,
 /// respectively.
 final radiansPerTick = radians(360 / 60);
-enum Status { ShowTime, Animate, ProcessingTime }
 
 /// A basic analog clock.
 ///
@@ -33,7 +32,6 @@ class DigitalClock extends StatefulWidget {
 
 class _DigitalClockState extends State<DigitalClock> {
   var _now = DateTime.now(), customTheme;
-  var current = Status.ShowTime;
   Timer _timer, _timer1, _timer2, _timer3, _timer4;
   DateTime _dateTime = DateTime.now();
   Map timeMap = {},
@@ -59,7 +57,7 @@ class _DigitalClockState extends State<DigitalClock> {
     }).then((v) {
       // Set the initial values.
       _updateModel();
-      //_initiateTimeMachine(firstLaunch: true);
+      _initiateTimeMachine(firstLaunch: true);
     });
   }
 
@@ -105,9 +103,8 @@ class _DigitalClockState extends State<DigitalClock> {
     isTellingNextTime = false;
 
     if ((_now.second > 0 && _now.second <= 20) ||
-        (_now.second > 30 && _now.second <= 40)) {
+        (_now.second > 30 && _now.second <= 41)) {
       setState(() {
-        current = Status.ShowTime;
         free[0] = free[1] = 0;
         List<String> hourList =
                 DateFormat(is24Format ? 'HH' : 'hh').format(_now).split(""),
@@ -121,29 +118,31 @@ class _DigitalClockState extends State<DigitalClock> {
         });
       });
       _timer1 = Timer(
-        Duration(seconds: _now.second > 0 && _now.second <= 20 ? 21 : 41) -
+        Duration(seconds: _now.second > 0 && _now.second <= 20 ? 21 : 42) -
             Duration(seconds: _now.second),
         _initiateTimeMachine,
       );
     } else if ((_now.second >= 21 && _now.second <= 30) ||
-        (_now.second >= 41 && _now.second <= 56)) {
+        (_now.second >= 42 && _now.second <= 57)) {
       setState(() {
-        current = Status.Animate;
         nextPoint['next'] = new Map.unmodifiable(
             timeMap["animate" + (new Random().nextInt(2)).toString()]);
-        _timer2 = Timer(Duration(seconds: 4, milliseconds: 600), _freeHands);
+
+        // To avoid the conflict of the free hands with the Showing time.
+        if ((_now.second >= 42 && _now.second <= 53) ||
+            (_now.second >= 21 && _now.second < 26))
+          _timer2 = Timer(Duration(seconds: 4, milliseconds: 400), _freeHands);
       });
 
       setState(() {});
 
       _timer3 = Timer(
           Duration(
-                  seconds: (_now.second >= 21 && _now.second <= 30) ? 31 : 57) -
+                  seconds: (_now.second >= 21 && _now.second <= 30) ? 31 : 58) -
               Duration(seconds: DateTime.now().second),
           _initiateTimeMachine);
     } else {
       setState(() {
-        current = Status.ProcessingTime;
         free[0] = free[1] = 0;
         isTellingNextTime = true;
         _dateTime = _now.add(Duration(seconds: 30));
@@ -162,7 +161,7 @@ class _DigitalClockState extends State<DigitalClock> {
         });
       });
       _timer4 =
-          Timer(Duration(seconds: 4, milliseconds: 600), _initiateTimeMachine);
+          Timer(Duration(seconds: 4, milliseconds: 400), _initiateTimeMachine);
     }
   }
 
@@ -177,14 +176,15 @@ class _DigitalClockState extends State<DigitalClock> {
     //    [DigitalClock].
     customTheme = Theme.of(context).brightness == Brightness.light
         ? Theme.of(context).copyWith(
-            // Clock Circle.
-            primaryColor: Colors.grey[200],
-            // hand color.
-            highlightColor: Colors.black,
-            accentColor: Colors.black)
+            primaryColor: Colors.grey[200], // small clocks boundary
+            highlightColor:
+                Colors.black54, // Background Color when showing time
+            focusColor: Colors.black26, // Color when showing time
+            accentColor: Colors.black) // Animation Color
         : Theme.of(context).copyWith(
             primaryColor: Colors.grey[800],
             highlightColor: Colors.white54,
+            focusColor: Colors.white24,
             accentColor: Colors.white);
 
     return Semantics.fromProperties(
@@ -448,43 +448,38 @@ class _DigitalClockState extends State<DigitalClock> {
     );
   }
 
-  bool _getStatus(String key, String id, int index) {
+  bool _getStatus(String key, String id) {
     return nextPoint != null &&
         nextPoint.containsKey("next") &&
         nextPoint["next"].containsKey(key);
   }
 
+  Color _getColor(String key, String id) {
+    if (_getStatus(key, id)) {
+      if (nextPoint['next'][key][id][0] == 37.0 &&
+          nextPoint['next'][key][id][1] == 37.0)
+        return customTheme.highlightColor;
+      else
+        return customTheme.accentColor;
+    } else {
+      if (starter[key][id][0] == 37.0 && starter[key][id][1] == 37.0)
+        return customTheme.focusColor;
+      else
+        return customTheme.accentColor;
+    }
+  }
+
   Widget getSimpleClock(String id, {String key = "other"}) {
     return DigitalClockMaker(
       primaryColor: customTheme.primaryColor,
-      highlightColor: _getStatus(key, id, 0) &&
-              nextPoint['next'][key][id][0] == 37.0 &&
-              (key == "other" ||
-                  key == "time1" ||
-                  key == "time2" ||
-                  key == "time3" ||
-                  key == "time4")
-          ? customTheme.highlightColor
-          : current == Status.Animate
-              ? customTheme.highlightColor
-              : customTheme.accentColor,
-      accentColor: _getStatus(key, id, 0) &&
-              nextPoint['next'][key][id][0] == 37.0 &&
-              (key == "other" ||
-                  key == "time1" ||
-                  key == "time2" ||
-                  key == "time3" ||
-                  key == "time4")
-          ? customTheme.highlightColor
-          : current == Status.Animate
-              ? customTheme.highlightColor
-              : customTheme.accentColor,
-      blackMin: /* _getStatus(key, id, 0)
-          ? nextPoint['next'][key][id][0] + 0.0
-          :  */starter[key][id][0],
-      blueMin: /* _getStatus(key, id, 1)
-          ? nextPoint['next'][key][id][1] + 0.0
-          : */ starter[key][id][1],
+      highlightColor: _getColor(key, id),
+      accentColor: _getColor(key, id),
+      blackMin: _getStatus(key, id)
+          ? nextPoint['next'][key][id][0]
+          : starter[key][id][0],
+      blueMin: _getStatus(key, id)
+          ? nextPoint['next'][key][id][1]
+          : starter[key][id][1],
       freeBlack: free[0],
       freeBlue: free[1],
     );
