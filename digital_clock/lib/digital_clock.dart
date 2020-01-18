@@ -102,8 +102,9 @@ class _DigitalClockState extends State<DigitalClock> {
     _now = DateTime.now();
     isTellingNextTime = false;
 
-    if ((_now.second > 0 && _now.second <= 20) ||
-        (_now.second > 30 && _now.second <= 41)) {
+    if ((_now.second > 0 && _now.second <= 13) ||
+        (_now.second > 24 && _now.second <= 35) ||
+        (_now.second > 45 && _now.second <= 57)) {
       setState(() {
         free[0] = free[1] = 0;
         List<String> hourList =
@@ -118,19 +119,22 @@ class _DigitalClockState extends State<DigitalClock> {
         });
       });
       _timer1 = Timer(
-        Duration(seconds: _now.second > 0 && _now.second <= 20 ? 21 : 42) -
+        Duration(
+                seconds: (_now.second > 0 && _now.second <= 13)
+                    ? 14
+                    : (_now.second > 24 && _now.second <= 35) ? 36 : 58) -
             Duration(seconds: _now.second),
         _initiateTimeMachine,
       );
-    } else if ((_now.second >= 21 && _now.second <= 30) ||
-        (_now.second >= 42 && _now.second <= 57)) {
+    } else if ((_now.second >= 14 && _now.second <= 24) ||
+        (_now.second >= 36 && _now.second <= 45)) {
       setState(() {
         nextPoint['next'] = new Map.unmodifiable(
             timeMap["animate" + (new Random().nextInt(2)).toString()]);
 
         // To avoid the conflict of the free hands with the Showing time.
-        if ((_now.second >= 42 && _now.second <= 53) ||
-            (_now.second >= 21 && _now.second < 26))
+        if ((_now.second >= 36 && _now.second <= 41) ||
+            (_now.second >= 14 && _now.second < 20))
           _timer2 = Timer(Duration(seconds: 4, milliseconds: 400), _freeHands);
       });
 
@@ -138,7 +142,7 @@ class _DigitalClockState extends State<DigitalClock> {
 
       _timer3 = Timer(
           Duration(
-                  seconds: (_now.second >= 21 && _now.second <= 30) ? 31 : 58) -
+                  seconds: (_now.second >= 14 && _now.second <= 24) ? 25 : 46) -
               Duration(seconds: DateTime.now().second),
           _initiateTimeMachine);
     } else {
