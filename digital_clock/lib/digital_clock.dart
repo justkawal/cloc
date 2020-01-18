@@ -170,13 +170,7 @@ class _DigitalClockState extends State<DigitalClock> {
 
   @override
   Widget build(BuildContext context) {
-    // There are many ways to apply themes to your clock. Some are:
-    //  - Inherit the parent Theme (see ClockCustomizer in the
-    //    flutter_clock_helper package).
-    //  - Override the Theme.of(context).colorScheme.
-    //  - Create your own [ThemeData], demonstrated in [AnalogClock].
-    //  - Create a map of [Color]s to custom keys, demonstrated in
-    //    [DigitalClock].
+    // There are many ways to apply themes to your clock.
     customTheme = Theme.of(context).brightness == Brightness.light
         ? Theme.of(context).copyWith(
             primaryColor: Colors.grey[200], // small clocks boundary
